@@ -6,24 +6,57 @@ import { handleInputErrors } from "../middlewares/validation";
 
 const router = Router();
 
-router.post('/',
-    body('projectName')
-        .trim().notEmpty().withMessage('El nombre del proyecto es obligatorio'),
-    body('clientName')
-        .trim().notEmpty().withMessage('El cliente del proyecto es obligatorio'),
-    body('description')
-        .trim().notEmpty().withMessage('La descripcion del proyecto es obligatoria'),
-    handleInputErrors,
-    ProjectController.createProject
+router.post(
+  "/",
+  body("projectName")
+    .trim()
+    .notEmpty()
+    .withMessage("El nombre del proyecto es obligatorio"),
+  body("clientName")
+    .trim()
+    .notEmpty()
+    .withMessage("El cliente del proyecto es obligatorio"),
+  body("description")
+    .trim()
+    .notEmpty()
+    .withMessage("La descripcion del proyecto es obligatoria"),
+  handleInputErrors,
+  ProjectController.createProject
 );
 
-router.get('/', ProjectController.getAllProjects);
+router.get("/", ProjectController.getAllProjects);
 
-router.get('/:id',
-    param('id')
-        .isMongoId().withMessage('ID no valido'),
-    handleInputErrors,
-    ProjectController.getProjectByID
+router.get(
+  "/:id",
+  param("id").isMongoId().withMessage("ID no valido"),
+  handleInputErrors,
+  ProjectController.getProjectByID
+);
+
+router.put(
+  "/:id",
+  param("id").isMongoId().withMessage("ID no valido"),
+  body("projectName")
+    .trim()
+    .notEmpty()
+    .withMessage("El nombre del proyecto es obligatorio"),
+  body("clientName")
+    .trim()
+    .notEmpty()
+    .withMessage("El cliente del proyecto es obligatorio"),
+  body("description")
+    .trim()
+    .notEmpty()
+    .withMessage("La descripcion del proyecto es obligatoria"),
+  handleInputErrors,
+  ProjectController.updateProject
+);
+
+router.delete(
+  "/:id",
+  param("id").isMongoId().withMessage("ID no valido"),
+  handleInputErrors,
+  ProjectController.deleteProject
 );
 
 export default router;

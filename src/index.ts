@@ -1,7 +1,9 @@
-import colors from 'colors';
-import server from './server'
+import colors from "colors";
+import server from "./server";
 
 const port = process.env.PORT || 4000;
-server.listen( port, () => {
-    console.log(colors.cyan.bold(`\nREST API Funcionando en el puerto ${port}\n`));
-})
+server.listen(port, () => {
+  console.log(
+    colors.cyan.bold(`\nREST API Funcionando en el puerto ${port}\n`)
+  );
+});
