@@ -3,9 +3,11 @@ import { body, param } from "express-validator";
 
 import { ProjectController } from "../controller/ProjectController";
 import { handleInputErrors } from "../middlewares/validation";
+import { TaskController } from "../controller/TaskController";
 
 const router = Router();
 
+// Routes for projects
 router.post(
   "/",
   body("projectName")
@@ -60,3 +62,11 @@ router.delete(
 );
 
 export default router;
+
+// Routes for tasks
+router.post(
+  "/:projectId/task",
+  param("projectId").isMongoId().withMessage("ID no valido"),
+  handleInputErrors,
+  TaskController.createTask
+);
