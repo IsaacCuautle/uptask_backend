@@ -5,29 +5,15 @@ import Project from "../models/project";
 
 export class TaskController {
   static createTask = async (req: Request, res: Response) => {
-    const { projectId } = req.params;
-
     try {
-      const project = await Project.findById(projectId);
+      const task = new Task(req.body);
+      task.project = req.project.id;
+      await task.save();
 
-      if (!project) {
-        const eror = new Error("Projecto no encontrado");
-        res.status(404).send({ error: eror.message });
-        return;
-      }
+      req.project.task.push(task.id);
+      await req.project.save();
 
-      try {
-        const task = new Task(req.body);
-        task.project = project.id;
-        await task.save();
-
-        project.task.push(task.id);
-        await project.save();
-
-        res.status(201).send("Tarea creada correctamente");
-      } catch (error) {
-        console.log(`\nA ocurrido un error: ${error}\n`);
-      }
+      res.status(201).send("Tarea creada correctamente");
     } catch (error) {
       console.log(`\nA ocurrido un error: ${error}\n`);
     }
