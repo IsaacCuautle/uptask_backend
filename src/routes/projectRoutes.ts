@@ -67,8 +67,19 @@ export default router;
 // Routes for tasks
 router.post(
   "/:projectId/task",
-  param("projectId").isMongoId().withMessage("ID no valido"),
   validateProjectExist,
+  body("taskName").trim().notEmpty().withMessage("El nombre es obligatorio"),
+  body("description")
+    .trim()
+    .notEmpty()
+    .withMessage("La descripcion es obligatoria"),
   handleInputErrors,
   TaskController.createTask
+);
+
+router.get(
+  "/:projectId/task",
+  validateProjectExist,
+  handleInputErrors,
+  TaskController.getAllProjectTask
 );
