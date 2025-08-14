@@ -22,7 +22,32 @@ export class TaskController {
 
   static getAllProjectTask = async (req: Request, res: Response) => {
     try {
-      let task = await Task.find({ project: req.project.id });
+      const task = await Task.find({ project: req.project.id }).populate(
+        "project"
+      );
+
+      res.status(200).json(task);
+    } catch (error) {
+      console.log(`\nA ocurrido un error: ${error}\n`);
+      res.status(500).json({ error: "Ocurrio un error" });
+    }
+    return;
+  };
+
+  static getTaskByID = async (req: Request, res: Response) => {
+    try {
+      const { taskID } = req.params;
+      const task = await Task.findById(taskID).populate("project");
+
+      if (!task) {
+        const error = new Error("Tarea no encontrada");
+        return res.status(404).json({ error: error.message });
+      }
+
+      if (task.project.id !== req.project.id) {
+        const error = new Error("Accion no valida");
+        return res.status(400).json({ error: error.message });
+      }
 
       res.status(200).json(task);
     } catch (error) {

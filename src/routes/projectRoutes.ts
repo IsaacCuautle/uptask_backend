@@ -83,3 +83,10 @@ router.get(
   handleInputErrors,
   TaskController.getAllProjectTask
 );
+
+router.get(
+  "/:projectId/task/:taskID",
+  validateProjectExist,
+  handleInputErrors,
+  TaskController.getTaskByID
+);
