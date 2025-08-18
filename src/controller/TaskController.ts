@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 
 import Task from "../models/task";
 import Project from "../models/project";
+import { NextFunction } from "express-serve-static-core";
 
 export class TaskController {
   static createTask = async (req: Request, res: Response) => {
@@ -55,5 +56,28 @@ export class TaskController {
       res.status(500).json({ error: "Ocurrio un error" });
     }
     return;
+  };
+
+  static updateTask = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const { taskID } = req.params;
+    try {
+      const updatedTask = req.body;
+      const task = await Task.findByIdAndUpdate(taskID, updatedTask);
+
+      if (!task) {
+        const error = new Error("Tarea no encontrada");
+        res.status(404).json({ error: error.message });
+      }
+
+      await task.save();
+      res.status(201).send("Tarea actualizada correctamente");
+    } catch (error) {
+      console.log(`\nA ocurrido un error: ${error}\n`);
+      res.status(500).json({ error: "Ocurrio un error" });
+    }
   };
 }
