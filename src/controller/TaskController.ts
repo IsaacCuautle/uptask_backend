@@ -58,15 +58,11 @@ export class TaskController {
     return;
   };
 
-  static updateTask = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  static updateTask = async (req: Request, res: Response) => {
     const { taskID } = req.params;
     try {
       const updatedTask = req.body;
-      const task = await Task.findByIdAndUpdate(taskID, updatedTask);
+      const task = await Task.findById(taskID, updatedTask);
 
       if (!task) {
         const error = new Error("Tarea no encontrada");
@@ -75,6 +71,27 @@ export class TaskController {
 
       await task.save();
       res.status(201).send("Tarea actualizada correctamente");
+    } catch (error) {
+      console.log(`\nA ocurrido un error: ${error}\n`);
+      res.status(500).json({ error: "Ocurrio un error" });
+    }
+  };
+
+  static deleteTask = async (req: Request, res: Response) => {
+    const { taskID } = req.params;
+    try {
+      const task = await Task.findById(taskID,req.body);
+
+      if (!task) {
+        const error = new Error("Tarea no encontrada");
+        res.status(404).json({ error: error.message });
+      }
+
+      req.project.task = req.project.task.filter(task => task.toString() !== taskID);
+
+      await Promise.allSettled([task.deleteOne(), req.project.save()]);
+      res.status(201).send("Tarea eliminada correctamente");
+
     } catch (error) {
       console.log(`\nA ocurrido un error: ${error}\n`);
       res.status(500).json({ error: "Ocurrio un error" });

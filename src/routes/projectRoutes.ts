@@ -102,3 +102,10 @@ router.put(
   handleInputErrors,
   TaskController.updateTask
 );
+
+router.delete(
+  "/:projectId/task/:taskID",
+  param("taskID").isMongoId().withMessage("ID no valido"),
+  handleInputErrors,
+  TaskController.deleteTask
+);
