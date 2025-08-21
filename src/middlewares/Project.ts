@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import Project, { InterfaceProject } from "../models/project";
+import Project, { InterfaceProject } from "../models/Project";
 
 declare global {
   namespace Express {
@@ -9,7 +9,7 @@ declare global {
   }
 }
 
-export async function validateProjectExist(
+export async function ProjectExist(
   req: Request,
   res: Response,
   next: NextFunction

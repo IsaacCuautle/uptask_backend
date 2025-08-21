@@ -1,8 +1,6 @@
 import type { Request, Response } from "express";
 
 import Task from "../models/task";
-import Project from "../models/project";
-import { NextFunction } from "express-serve-static-core";
 
 export class TaskController {
   static createTask = async (req: Request, res: Response) => {
@@ -37,20 +35,7 @@ export class TaskController {
 
   static getTaskByID = async (req: Request, res: Response) => {
     try {
-      const { taskID } = req.params;
-      const task = await Task.findById(taskID).populate("project");
-
-      if (!task) {
-        const error = new Error("Tarea no encontrada");
-        return res.status(404).json({ error: error.message });
-      }
-
-      if (task.project.id !== req.project.id) {
-        const error = new Error("Accion no valida");
-        return res.status(400).json({ error: error.message });
-      }
-
-      res.status(200).json(task);
+      res.status(200).json(req.task);
     } catch (error) {
       console.log(`\nA ocurrido un error: ${error}\n`);
       res.status(500).json({ error: "Ocurrio un error" });
@@ -59,17 +44,11 @@ export class TaskController {
   };
 
   static updateTask = async (req: Request, res: Response) => {
-    const { taskID } = req.params;
     try {
-      const updatedTask = req.body;
-      const task = await Task.findById(taskID, updatedTask);
+      req.task.taskName = req.body.taskName;
+      req.task.description = req.body.description;
+      await req.task.save();
 
-      if (!task) {
-        const error = new Error("Tarea no encontrada");
-        res.status(404).json({ error: error.message });
-      }
-
-      await task.save();
       res.status(201).send("Tarea actualizada correctamente");
     } catch (error) {
       console.log(`\nA ocurrido un error: ${error}\n`);
@@ -78,20 +57,26 @@ export class TaskController {
   };
 
   static deleteTask = async (req: Request, res: Response) => {
-    const { taskID } = req.params;
     try {
-      const task = await Task.findById(taskID,req.body);
+      req.project.task = req.project.task.filter(
+        (task) => task.toString() !== req.task.id
+      );
 
-      if (!task) {
-        const error = new Error("Tarea no encontrada");
-        res.status(404).json({ error: error.message });
-      }
-
-      req.project.task = req.project.task.filter(task => task.toString() !== taskID);
-
-      await Promise.allSettled([task.deleteOne(), req.project.save()]);
+      await Promise.allSettled([req.task.deleteOne(), req.project.save()]);
       res.status(201).send("Tarea eliminada correctamente");
+    } catch (error) {
+      console.log(`\nA ocurrido un error: ${error}\n`);
+      res.status(500).json({ error: "Ocurrio un error" });
+    }
+  };
 
+  static updateStatus = async (req: Request, res: Response) => {
+    try {
+      const { status } = req.body;
+      req.task.status = status;
+      await req.task.save();
+
+      res.status(201).send("Status actualizado correctamente");
     } catch (error) {
       console.log(`\nA ocurrido un error: ${error}\n`);
       res.status(500).json({ error: "Ocurrio un error" });
