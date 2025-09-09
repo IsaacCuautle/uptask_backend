@@ -21,6 +21,7 @@ export class ProjectController {
       if (!project) {
         const error = new Error("Proyecto no encontrado");
         res.status(404).json({ error: error.message });
+        return;
       }
 
       res.status(200).json(project);
@@ -32,6 +33,7 @@ export class ProjectController {
 
   static createProject = async (req: Request, res: Response) => {
     const project = new Project(req.body);
+
 
     try {
       await project.save();
