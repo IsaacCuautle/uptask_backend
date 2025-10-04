@@ -1,32 +1,32 @@
 import mongoose, { Schema, Document, PopulatedDoc } from "mongoose";
 
-import { InterfaceTask } from "./task";
+import { InterfaceTask } from "./Task";
 
 export interface InterfaceProject extends Document {
-  proyectName: string;
+  projectName: string;
   clientName: string;
   description: string;
-  task: PopulatedDoc<InterfaceTask & Document>[];
+  tasks: PopulatedDoc<InterfaceTask & Document>[];
 }
 
 const ProjectSchema: Schema = new Schema(
   {
     projectName: {
       type: String,
-      requiered: true,
+      required: true,
       trim: true,
     },
     clientName: {
       type: String,
-      requiered: true,
+      required: true,
       trim: true,
     },
     description: {
       type: String,
-      requiered: true,
+      required: true,
       trim: true,
     },
-    task: [
+    tasks: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Task",

@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import Task, { InterfaceTask } from "../models/task";
+import Task, { InterfaceTask } from "../models/Task";
 
 declare global {
   namespace Express {

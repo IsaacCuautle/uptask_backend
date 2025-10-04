@@ -1,13 +1,13 @@
 import type { Request, Response } from "express";
 
-import Task from "../models/task";
+import Task from "../models/Task";
 
 export class TaskController {
   static createTask = async (req: Request, res: Response) => {
     try {
       const task = new Task(req.body);
       task.project = req.project.id;
-      req.project.task.push(task.id);
+      req.project.tasks.push(task.id);
 
       await Promise.allSettled([task.save(), req.project.save()]);
 
@@ -58,7 +58,7 @@ export class TaskController {
 
   static deleteTask = async (req: Request, res: Response) => {
     try {
-      req.project.task = req.project.task.filter(
+      req.project.tasks = req.project.tasks.filter(
         (task) => task.toString() !== req.task.id
       );
 
